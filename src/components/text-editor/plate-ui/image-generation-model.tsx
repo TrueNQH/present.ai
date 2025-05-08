@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { usePresentationState } from "@/states/presentation-state";
+
+import { create } from "zustand";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -162,11 +163,19 @@ export function GenerateImageDialogContent({
     </>
   );
 }
+interface PresentationState {
+  imageGenerationModelOpen: boolean;
+  setImageGenerationModelOpen: (value: boolean) => void;
+}
 
+const usePresentationState = create<PresentationState>((set) => ({
+  imageGenerationModelOpen: false,
+  setImageGenerationModelOpen: (value) => set({ imageGenerationModelOpen: value }),
+}));
 export default function ImageGenerationModel() {
-  const { imageGenerationModelOpen, setImageGenerationModelOpen } =
-    usePresentationState();
+  const { imageGenerationModelOpen, setImageGenerationModelOpen } = usePresentationState();
   const [isGenerating, setIsGenerating] = useState(false);
+
   return (
     <AlertDialog
       open={imageGenerationModelOpen}
