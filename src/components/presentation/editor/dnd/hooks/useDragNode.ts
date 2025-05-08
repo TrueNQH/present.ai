@@ -1,0 +1,62 @@
+import { type DragSourceHookSpec, useDrag } from "react-dnd";
+
+import type { TElement } from "@udecode/plate";
+import type { PlateEditor } from "@udecode/plate/react";
+
+import type { DragItemNode } from "@udecode/plate-dnd";
+
+import { DndPlugin } from "@udecode/plate-dnd";
+
+export interface UseDragNodeOptions
+  extends DragSourceHookSpec<DragItemNode, unknown, { isDragging: boolean }> {
+  element: TElement;
+}
+
+/**
+ * `useDrag` hook to drag a node from the editor. `item` with `id` is required.
+ *
+ * On drag start:
+ *
+ * - Set `isDragging` to true
+ * - Add `dragging` class to `body`
+ *
+ * On drag end:
+ *
+ * - Set `isDragging` to false
+ * - Remove `dragging` class to `body`
+ *
+ * Collect:
+ *
+ * - IsDragging: true if mouse is dragging the block
+ */
+export const useDragNode = (
+  editor: PlateEditor,
+  { element, item, ...options }: UseDragNodeOptions,
+) => {
+  return useDrag<DragItemNode, unknown, { isDragging: boolean }>(
+    () => ({
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: () => {
+        editor.setOption(DndPlugin, "isDragging", false);
+        document.body.classList.remove("dragging");
+      },
+      item(monitor) {
+        editor.setOption(DndPlugin, "isDragging", true);
+        document.body.classList.add("dragging");
+
+        const _item = typeof item === "function" ? item(monitor) : item;
+
+        return {
+          id: element.id as string,
+          editorId: editor.id,
+          element,
+          ..._item,
+        };
+      },
+      ...options,
+    }),
+    [],
+  );
+};

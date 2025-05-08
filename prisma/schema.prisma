@@ -1,0 +1,144 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+}
+
+// Necessary for Next auth
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? // @db.Text
+    access_token             String? // @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? // @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+enum UserRole {
+    ADMIN
+    USER
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    password      String?
+    emailVerified DateTime?
+    image         String?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @default(now()) @updatedAt
+    headline      String?   @db.VarChar(100)
+    bio           String?   @db.Text
+    interests     String[]
+    location      String?
+    website       String?
+    accounts      Account[]
+
+    role      UserRole @default(USER)
+    hasAccess Boolean  @default(false)
+
+    // Document system
+    documents BaseDocument[]
+    favorites FavoriteDocument[]
+
+    CustomTheme CustomTheme[]
+
+    GeneratedImage GeneratedImage[]
+}
+
+enum DocumentType {
+    NOTE
+    DOCUMENT
+    DRAWING
+    DESIGN
+    STICKY_NOTES
+    MIND_MAP
+    RAG
+    RESEARCH_PAPER
+    FLIPBOOK
+    PRESENTATION
+}
+
+model BaseDocument {
+    id           String        @id @default(cuid())
+    title        String
+    type         DocumentType
+    userId       String
+    user         User          @relation(fields: [userId], references: [id])
+    thumbnailUrl String?
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    isPublic     Boolean       @default(false)
+    documentType String
+    // Relations to specific document types
+    presentation Presentation?
+
+    // Favorites
+    favorites FavoriteDocument[]
+}
+
+model Presentation {
+    id                String       @id @default(cuid())
+    content           Json // Presentation content including slides, theme, etc.
+    theme             String       @default("default")
+    imageModel        String? // The image model used for generating images
+    presentationStyle String? // The style of the presentation
+    language          String?      @default("en-US") // The language of the presentation
+    outline           String[] // Store the presentation outline
+    base              BaseDocument @relation(fields: [id], references: [id], onDelete: Cascade)
+    templateId        String?
+    customThemeId     String? // Reference to custom theme if used
+    customTheme       CustomTheme? @relation(fields: [customThemeId], references: [id])
+}
+
+model CustomTheme {
+    id            String         @id @default(cuid())
+    name          String
+    description   String?
+    userId        String
+    user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    logoUrl       String?
+    isPublic      Boolean        @default(false)
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    themeData     Json // Store the complete theme configuration
+    presentations Presentation[]
+
+    @@index([userId])
+}
+
+model FavoriteDocument {
+    id         String       @id @default(uuid())
+    documentId String
+    document   BaseDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+    userId     String
+    user       User         @relation(fields: [userId], references: [id])
+}
+
+model GeneratedImage {
+    id        String   @id @default(cuid())
+    url       String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    prompt    String
+}

@@ -1,0 +1,72 @@
+/* Shadcn UI theme compatibility for react-fontpicker-ts */
+
+/* Base container - just change colors to match theme */
+.fontpicker {
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Dark mode: invert SVG previews to make them visible */
+@media (prefers-color-scheme: dark) {
+  .fontpicker__preview,
+  .fontpicker__option {
+    filter: invert(100%) !important;
+  }
+}
+
+/* Light mode: ensure no inversion */
+@media (prefers-color-scheme: light) {
+  .fontpicker__preview,
+  .fontpicker__option {
+    filter: invert(0%) !important;
+  }
+}
+
+/* For apps with class-based dark mode */
+:root.dark .fontpicker__preview,
+:root.dark .fontpicker__option {
+  filter: invert(100%) !important;
+}
+
+:root:not(.dark) .fontpicker__preview,
+:root:not(.dark) .fontpicker__option {
+  filter: invert(0%) !important;
+}
+
+/* Handle data-theme based dark mode */
+[data-theme="dark"] .fontpicker__preview,
+[data-theme="dark"] .fontpicker__option {
+  filter: invert(100%) !important;
+}
+
+[data-theme="light"] .fontpicker__preview,
+[data-theme="light"] .fontpicker__option {
+  filter: invert(0%) !important;
+}
+
+/* Search input */
+.fontpicker__search {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Dropdown/popout */
+.fontpicker__popout {
+  height: 21rem;
+  max-height: 21rem !important;
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--background));
+}
+
+/* Selected option */
+.fontpicker__option.selected {
+  background-color: #b4b4b4;
+  color: hsl(var(--accent-foreground));
+}
+
+/* No matches message */
+.fontpicker__nomatches {
+  background-color: hsl(var(--background));
+  color: hsl(var(--muted-foreground));
+}

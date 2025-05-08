@@ -1,0 +1,253 @@
+/* Presentation Theme Styles */
+
+/* CSS Variables for theming */
+:root {
+  /* Colors */
+  --presentation-primary: #3b82f6;
+  --presentation-secondary: #1f2937;
+  --presentation-accent: #60a5fa;
+  --presentation-background: #ffffff;
+  --presentation-text: #1f2937;
+  --presentation-heading: #111827;
+  --presentation-muted: #6b7280;
+
+  /* Fonts */
+  --presentation-heading-font: "Inter", sans-serif;
+  --presentation-body-font: "Inter", sans-serif;
+
+  /* Transitions */
+  --presentation-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --presentation-primary: #60a5fa;
+  --presentation-secondary: #e5e7eb;
+  --presentation-accent: #93c5fd;
+  --presentation-background: #111827;
+  --presentation-text: #e5e7eb;
+  --presentation-heading: #f9fafb;
+  --presentation-muted: #9ca3af;
+}
+
+/* Fullscreen responsive styles */
+:fullscreen .presentation-element,
+:-webkit-full-screen .presentation-element,
+:-moz-full-screen .presentation-element,
+:-ms-fullscreen .presentation-element {
+  font-size: 1.5em;
+}
+
+:fullscreen h1.presentation-heading,
+:-webkit-full-screen h1.presentation-heading,
+:-moz-full-screen h1.presentation-heading,
+:-ms-fullscreen h1.presentation-heading {
+  font-size: 3em !important;
+}
+
+:fullscreen h2.presentation-heading,
+:-webkit-full-screen h2.presentation-heading,
+:-moz-full-screen h2.presentation-heading,
+:-ms-fullscreen h2.presentation-heading {
+  font-size: 2.5em !important;
+}
+
+:fullscreen h3.presentation-heading,
+:-webkit-full-screen h3.presentation-heading,
+:-moz-full-screen h3.presentation-heading,
+:-ms-fullscreen h3.presentation-heading {
+  font-size: 2em !important;
+}
+
+:fullscreen .presentation-paragraph,
+:-webkit-full-screen .presentation-paragraph,
+:-moz-full-screen .presentation-paragraph,
+:-ms-fullscreen .presentation-paragraph {
+  font-size: 1.5em !important;
+  line-height: 1.5;
+}
+
+/* Additional fullscreen styles for presentation mode */
+:fullscreen .ProseMirror *,
+:-webkit-full-screen .ProseMirror *,
+:-moz-full-screen .ProseMirror *,
+:-ms-fullscreen .ProseMirror * {
+  font-size: 1.3em !important;
+}
+
+:fullscreen [data-slate-editor="true"] *,
+:-webkit-full-screen [data-slate-editor="true"] *,
+:-moz-full-screen [data-slate-editor="true"] *,
+:-ms-fullscreen [data-slate-editor="true"] * {
+  font-size: 1.3em !important;
+}
+
+/* Special styles for when isPresenting is true */
+[data-is-presenting="true"] .ProseMirror * {
+  font-size: 1.4em !important;
+}
+
+[data-is-presenting="true"] h1 {
+  font-size: 3em !important;
+}
+
+[data-is-presenting="true"] h2 {
+  font-size: 2.5em !important;
+}
+
+[data-is-presenting="true"] h3 {
+  font-size: 2em !important;
+}
+
+[data-is-presenting="true"] p {
+  font-size: 1.5em !important;
+  line-height: 1.6;
+}
+
+/* Fullscreen responsive styles for PresentationEditor container */
+:fullscreen [class*="PresentationEditor"],
+:-webkit-full-screen [class*="PresentationEditor"],
+:-moz-full-screen [class*="PresentationEditor"],
+:-ms-fullscreen [class*="PresentationEditor"] {
+  transform: scale(1.2);
+  transform-origin: center center;
+}
+
+/* Base styles */
+.presentation-element {
+  transition: var(--presentation-transition);
+}
+
+/* Theme styles using CSS variables */
+.presentation-primary {
+  color: var(--presentation-primary);
+  background-color: transparent;
+  caret-color: var(--presentation-primary);
+}
+
+.presentation-secondary {
+  color: var(--presentation-secondary);
+  background-color: transparent;
+  caret-color: var(--presentation-primary);
+}
+
+.presentation-heading {
+  background: linear-gradient(
+    135deg,
+    var(--presentation-primary),
+    var(--presentation-accent)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--presentation-heading-font);
+  font-weight: bold;
+  caret-color: var(--presentation-primary);
+}
+
+.presentation-text {
+  color: var(--presentation-text);
+  font-family: var(--presentation-body-font);
+  caret-color: var(--presentation-primary);
+}
+
+/* Image styles */
+.presentation-image-container {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.presentation-image-wrapper {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.presentation-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.presentation-image-caption {
+  margin-top: 0.5rem;
+  color: var(--presentation-muted);
+  font-size: 0.875rem;
+}
+
+/* Heading styles */
+h1.presentation-heading {
+  font-size: 2.5em;
+  margin-bottom: 1rem;
+}
+
+h2.presentation-heading {
+  font-size: 2em;
+  margin-bottom: 0.875rem;
+}
+
+h3.presentation-heading {
+  font-size: 1.75em;
+  margin-bottom: 0.75rem;
+}
+
+h4.presentation-heading {
+  font-size: 1.5em;
+  margin-bottom: 0.625rem;
+}
+
+h5.presentation-heading {
+  font-size: 1.25em;
+  margin-bottom: 0.5rem;
+}
+
+h6.presentation-heading {
+  font-size: 1.125em;
+  margin-bottom: 0.375rem;
+}
+
+/* Paragraph styles */
+.presentation-paragraph {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-family: var(--presentation-body-font);
+}
+
+/* Styling for presentation slides to stand out from background */
+[data-is-presenting="true"] {
+  backdrop-filter: brightness(1.05);
+}
+
+[data-theme="dark"] [data-is-presenting="true"] {
+  backdrop-filter: brightness(1.1);
+}
+
+/* Presentation slide styling */
+.presentation-slide {
+  background-color: var(--presentation-background) !important;
+  border: 1px solid var(--presentation-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--presentation-text) !important;
+}
+
+/* Additional theme-specific slide styling */
+[data-theme="light"] [data-slide-content="true"],
+[data-theme="light"] .presentation-slide,
+.presentation-slide[style] {
+  background-color: var(--presentation-background) !important;
+}
+
+[data-theme="dark"] [data-slide-content="true"],
+[data-theme="dark"] .presentation-slide,
+[data-theme="dark"] .presentation-slide[style] {
+  background-color: var(--presentation-background) !important;
+}
+
+[data-theme="dark"] .presentation-slide {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Override any inline bgColor from initialContent */
+.presentation-slide[style*="background"] {
+  background-color: var(--presentation-background) !important;
+}
