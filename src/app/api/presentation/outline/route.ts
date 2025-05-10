@@ -2,8 +2,7 @@ import { LangChainAdapter } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import axios from "axios";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { RunnableSequence } from "@langchain/core/runnables";
+
 import { Readable } from "stream";
 interface OutlineRequest {
   prompt: string;

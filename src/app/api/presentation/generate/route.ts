@@ -2,10 +2,7 @@ import { LangChainAdapter } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import { Readable } from "stream";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { RunnableSequence } from "@langchain/core/runnables";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 interface SlidesRequest {
   title: string; // Presentation title
   outline: string[]; // Array of main topics with markdown content
@@ -193,10 +190,26 @@ export async function POST(req: Request) {
       .replace("{TOTAL_SLIDES}", outline.length.toString());
 
     // Gọi API riêng của bạn
-    const response = await axios.post(
+    const response: AxiosResponse<ApiResponse> = await axios.post(
       "https://aiscanner.tech/api/server/chat",
-      { model: "gpt-4o-mini", prompt }, 
-      { timeout: 60000, family: 4, headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" } }
+      { model: "gpt-4o-mini", prompt },
+      { timeout: 60000, family: 4, headers: { Authorization: "Bearer       import axios, { AxiosResponse } from "axios";
+      
+      interface ApiResponse {
+        data: {
+          data: {
+            choices: { text: string }[];
+          };
+        };
+      }
+      
+      const response: AxiosResponse<ApiResponse> = await axios.post(
+        "https://aiscanner.tech/api/server/chat",
+        { model: "gpt-4o-mini", prompt: formattedPrompt },
+        { timeout: 60000, family: 4, headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" } }
+      );
+      
+      console.log(response.data.data.choices[0].text);ff22ee3e-908c-4237-a14b-b9ba56b6769c" } }
     );
     console.log(response.data.data.choices[0].text);
     
@@ -216,4 +229,8 @@ export async function POST(req: Request) {
       { status: 500 },
     );
   }
-}
+}// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { PromptTemplate } from "@langchain/core/prompts";
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+console.log(response.data.data.choices[0].text);
