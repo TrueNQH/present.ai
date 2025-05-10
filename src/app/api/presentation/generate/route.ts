@@ -233,4 +233,67 @@ export async function POST(req: Request) {
 import { PromptTemplate } from "@langchain/core/prompts";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-console.log(response.data.data.choices[0].text);
+console.log(response.data.data.choices[0].text);import axios, { AxiosResponse } from "axios";
+
+interface ApiResponse {
+  data: {
+    data: {
+      choices: { text: string }[];
+    };
+  };
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { title, outline, language, tone } =
+      (await req.json()) as SlidesRequest;
+
+    if (!title || !outline || !Array.isArray(outline) || !language) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const prompt = slidesTemplate
+      .replace("{TITLE}", title)
+      .replace("{LANGUAGE}", language)
+      .replace("{TONE}", tone || "neutral")
+      .replace("{OUTLINE_FORMATTED}", outline.join("\n\n"))
+      .replace("{TOTAL_SLIDES}", outline.length.toString());
+
+    const response: AxiosResponse<ApiResponse> = await axios.post(
+      "https://aiscanner.tech/api/server/chat",
+      { model: "gpt-4o-mini", prompt },
+      {
+        timeout: 60000,
+        family: 4,
+        headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" },
+      }
+    );
+
+    console.log(response.data.data.choices[0].text);
+
+    const stream = Readable.from([response.data.data.choices[0].text]);
+    const readableStream = new ReadableStream({
+      start(controller) {
+        stream.on("data", (chunk) => controller.enqueue(chunk));
+        stream.on("end", () => controller.close());
+        stream.on("error", (err) => controller.error(err));
+      },
+    });
+
+    return LangChainAdapter.toDataStreamResponse(readableStream);
+  } catch (error) {
+    console.error("Error in presentation generation:", error);
+    return NextResponse.json(
+      { error: "Failed to generate presentation slides" },
+      { status: 500 }
+    );
+  }
+}
