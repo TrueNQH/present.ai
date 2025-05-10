@@ -2,14 +2,29 @@ import { LangChainAdapter } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import { Readable } from "stream";
-import axios, { AxiosResponse } from "axios";
+// Removed duplicate import of AxiosResponse
+import axios from "axios";
 interface SlidesRequest {
   title: string; // Presentation title
   outline: string[]; // Array of main topics with markdown content
   language: string; // Language to use for the slides
   tone: string; // Style for image queries (optional)
 }
+// Define the structure for the expected response from the API
+interface ApiResponse {
+  data: {
+    data: {
+      choices: { text: string }[];
+    };
+  };
+}
 
+interface SlidesRequest {
+  title: string;
+  outline: string[];
+  language: string;
+  tone: string;
+}
 const slidesTemplate = `
 You are an expert presentation designer.Your task is to create an engaging presentation in XML format.
 ## CORE REQUIREMENTS
