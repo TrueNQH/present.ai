@@ -2,29 +2,15 @@ import { LangChainAdapter } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import { Readable } from "stream";
-// Removed duplicate import of AxiosResponse
-import axios from "axios";
+import axios  from "axios";
+import type { AxiosResponse } from "axios";
 interface SlidesRequest {
   title: string; // Presentation title
   outline: string[]; // Array of main topics with markdown content
   language: string; // Language to use for the slides
   tone: string; // Style for image queries (optional)
 }
-// Define the structure for the expected response from the API
-interface ApiResponse {
-  data: {
-    data: {
-      choices: { text: string }[];
-    };
-  };
-}
 
-interface SlidesRequest {
-  title: string;
-  outline: string[];
-  language: string;
-  tone: string;
-}
 const slidesTemplate = `
 You are an expert presentation designer.Your task is to create an engaging presentation in XML format.
 ## CORE REQUIREMENTS
@@ -179,7 +165,6 @@ Now create a complete XML presentation with {TOTAL_SLIDES} slides that significa
 `;
 
 
-
 export async function POST(req: Request) {
   try {
     const session = await auth();
@@ -187,8 +172,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, outline, language, tone } =
-      (await req.json()) as SlidesRequest;
+    const { title, outline, language, tone } = (await req.json()) as SlidesRequest;
 
     if (!title || !outline || !Array.isArray(outline) || !language) {
       return NextResponse.json(
@@ -204,83 +188,12 @@ export async function POST(req: Request) {
       .replace("{OUTLINE_FORMATTED}", outline.join("\n\n"))
       .replace("{TOTAL_SLIDES}", outline.length.toString());
 
-    // Gọi API riêng của bạn
-    const response: AxiosResponse<ApiResponse> = await axios.post(
-      "https://aiscanner.tech/api/server/chat",
-      { model: "gpt-4o-mini", prompt },
-      { timeout: 60000, family: 4, headers: { Authorization: "Bearer       import axios, { AxiosResponse } from "axios";
-      
-      interface ApiResponse {
-        data: {
-          data: {
-            choices: { text: string }[];
-          };
-        };
-      }
-      
-      const response: AxiosResponse<ApiResponse> = await axios.post(
-        "https://aiscanner.tech/api/server/chat",
-        { model: "gpt-4o-mini", prompt: formattedPrompt },
-        { timeout: 60000, family: 4, headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" } }
-      );
-      
-      console.log(response.data.data.choices[0].text);ff22ee3e-908c-4237-a14b-b9ba56b6769c" } }
-    );
-    console.log(response.data.data.choices[0].text);
-    
-    const stream = Readable.from([response.data.data.choices[0].text]);
-    const readableStream = new ReadableStream({
-      start(controller) {
-        stream.on("data", (chunk) => controller.enqueue(chunk));
-        stream.on("end", () => controller.close());
-        stream.on("error", (err) => controller.error(err));
-      },
-    });
-    return LangChainAdapter.toDataStreamResponse(readableStream);
-  } catch (error) {
-    console.error("Error in presentation generation:", error);
-    return NextResponse.json(
-      { error: "Failed to generate presentation slides" },
-      { status: 500 },
-    );
-  }
-}// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PromptTemplate } from "@langchain/core/prompts";
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-console.log(response.data.data.choices[0].text);import axios, { AxiosResponse } from "axios";
-
-interface ApiResponse {
-  data: {
-    data: {
-      choices: { text: string }[];
-    };
-  };
-}
-
-export async function POST(req: Request) {
-  try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Make the API request
+    interface ApiResponse {
+      data: {
+        choices: { text: string }[];
+      };
     }
-
-    const { title, outline, language, tone } =
-      (await req.json()) as SlidesRequest;
-
-    if (!title || !outline || !Array.isArray(outline) || !language) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    const prompt = slidesTemplate
-      .replace("{TITLE}", title)
-      .replace("{LANGUAGE}", language)
-      .replace("{TONE}", tone || "neutral")
-      .replace("{OUTLINE_FORMATTED}", outline.join("\n\n"))
-      .replace("{TOTAL_SLIDES}", outline.length.toString());
 
     const response: AxiosResponse<ApiResponse> = await axios.post(
       "https://aiscanner.tech/api/server/chat",
@@ -288,13 +201,13 @@ export async function POST(req: Request) {
       {
         timeout: 60000,
         family: 4,
-        headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" },
+        headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" }, // Replace with your valid token
       }
     );
 
-    console.log(response.data.data.choices[0].text);
+    console.log(response.data.data.choices[0]?.text ?? "No text available");
 
-    const stream = Readable.from([response.data.data.choices[0].text]);
+    const stream = Readable.from([response.data.data.choices[0]?.text ?? ""]);
     const readableStream = new ReadableStream({
       start(controller) {
         stream.on("data", (chunk) => controller.enqueue(chunk));

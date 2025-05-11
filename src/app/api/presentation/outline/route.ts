@@ -2,14 +2,18 @@ import { LangChainAdapter } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import axios from "axios";
-
+import type { AxiosResponse } from "axios";
 import { Readable } from "stream";
 interface OutlineRequest {
   prompt: string;
   numberOfCards: number;
   language: string;
 }
-
+interface ApiResponse {
+  data: {
+    choices: { text: string }[];
+  };
+}
 const outlineTemplate = `
 Generate a structured presentation outline based on the following details:
 
@@ -63,15 +67,19 @@ export async function POST(req: Request) {
       .replace("{language}", language);
 
     // Gửi request đến API bên thứ 3
-    const response = await axios.post(
-      "https://aiscanner.tech/api/server/chat",
-      { model: "gpt-4o-mini", prompt: formattedPrompt },
-      { timeout: 60000, family: 4,headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" } }
-    );
+    const response = await axios.post<ApiResponse>(
+  "https://aiscanner.tech/api/server/chat",
+  { model: "gpt-4o-mini", prompt: formattedPrompt },
+  {
+    timeout: 60000,
+    family: 4,
+    headers: { Authorization: "Bearer ff22ee3e-908c-4237-a14b-b9ba56b6769c" },
+  }
+);
 
-    console.log(response.data.data.choices[0].text);
+console.log(response.data.data.choices[0]?.text ?? "No text available");
 
-    const stream = Readable.from([response.data.data.choices[0].text]);
+const stream = Readable.from([response.data.data.choices[0]?.text ?? ""]);
         const readableStream = new ReadableStream({
           start(controller) {
             stream.on("data", (chunk) => controller.enqueue(chunk));
