@@ -2,7 +2,7 @@ import { LangChainAdapter } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import axios from "axios";
-import type { AxiosResponse } from "axios";
+
 import { Readable } from "stream";
 interface OutlineRequest {
   prompt: string;
