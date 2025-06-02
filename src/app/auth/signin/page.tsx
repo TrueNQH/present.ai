@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import type { AxiosError } from "axios";
 
 interface LoginResponse {
   success: boolean;
@@ -38,11 +39,11 @@ export default function SignIn() {
         setSuccess("Đăng nhập thành công!");
         localStorage.setItem("aiscanner_token", response.data.data?.token ?? "");
       } else {
-        setError(response.data.message || "Đăng nhập thất bại");
+        setError(response.data.message ?? "Đăng nhập thất bại");
       }
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
-      setError(axiosError.response?.data?.message || "Lỗi đăng nhập");
+      setError(axiosError.response?.data?.message ?? "Lỗi đăng nhập");
     }
   };
 
